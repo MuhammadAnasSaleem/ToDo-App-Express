@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 const app = express();
 const port = process.env.PORT || 3000;
 const todos = [
@@ -7,6 +8,7 @@ const todos = [
 ];
 
 app.use(express.json()); // request ko jso kaiformat mai convert karnai kailiye
+app.use(cors());
 
 app.get("/api/v1/todos", (req, res) => {
   const message = todos.length ? "Todos received" : "No Todos Available";
