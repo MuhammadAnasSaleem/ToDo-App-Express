@@ -8,13 +8,13 @@ const todos = [
 
 app.use(express.json()); // request ko jso kaiformat mai convert karnai kailiye
 
-app.get("/get-all-todo", (req, res) => {
+app.get("/api/v1/todos", (req, res) => {
   const message = todos.length ? "Todos received" : "No Todos Available";
   res.send({ data: todos, message: message });
 });
 
 //This api get all todos
-app.post("/post-todo", (req, res) => {
+app.post("/api/v1/todo", (req, res) => {
   const obj = {
     todocontent: req.body.todocontent,
     id: String(new Date().getTime()),
@@ -25,7 +25,7 @@ app.post("/post-todo", (req, res) => {
 
 //This api post a todo
 
-app.patch("/edit-todo:id", (req, res) => {
+app.patch("/api/v1/todo:id", (req, res) => {
   const id = req.params.id;
   let isFound = false;
   for (let i = 0; i < todos.length; i++) {
@@ -46,7 +46,7 @@ app.patch("/edit-todo:id", (req, res) => {
 });
 
 //This api edit a todo
-app.delete("/delete-todo:id", (req, res) => {
+app.delete("/api/v1/todo:id", (req, res) => {
   const id = req.params.id;
   let isFound = false;
   for (let i = 0; i < todos.length; i++) {
@@ -68,7 +68,7 @@ app.delete("/delete-todo:id", (req, res) => {
 //This api delete a todo
 
 app.use((req, res) => {
-  res.status(404).send("No Route Found");
+  res.status(404).send("Sahi Route Dal Bhai");
 });
 //if any of the route doesnt match this will be called an give 404 error
 
