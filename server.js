@@ -10,6 +10,10 @@ const todos = [
 app.use(express.json()); // request ko jso kaiformat mai convert karnai kailiye
 app.use(cors());
 
+app.get("/", (req, res) => {
+  res.send("Hello, Welcome to the Todo API!");
+});
+
 app.get("/api/v1/todos", (req, res) => {
   const message = todos.length ? "Todos received" : "No Todos Available";
   res.send({ data: todos, message: message });
