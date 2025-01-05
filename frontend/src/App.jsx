@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 const maxTodoLength = 30;
 
 function App() {
-  const BASE_URL = "http://localhost:3000";
+  const BASE_URL =
+    "https://to-do-app-express-iela.vercel.app" || "http://localhost:3000";
   const [todos, setTodos] = useState();
   const getTodo = async () => {
     //this function get all the todos from server
