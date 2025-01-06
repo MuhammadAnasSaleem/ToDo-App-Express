@@ -75,11 +75,12 @@ function App() {
               className="w-full p-3 rounded-lg mb-4 bg-gray-700 text-white outline-none placeholder-gray-400"
               placeholder="Enter task..."
             />
+            <button className="w-full py-3 bg-blue-500 text-black font-bold rounded-lg hover:bg-blue-600 transition-all">
+              Add Task
+            </button>
           </form>
           {/* Add Task button */}
-          <button className="w-full py-3 bg-blue-500 text-black font-bold rounded-lg hover:bg-blue-600 transition-all">
-            Add Task
-          </button>
+
           {/* Task List */}
           <ul className="mt-4 space-y-2">
             {todos?.map((todo) => (
