@@ -1,5 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+
 const maxTodoLength = 30;
 
 function App() {
@@ -57,6 +59,14 @@ function App() {
           previoustodos.filter((todo) => todo.id !== id)
         );
       }
+      toast(res.data?.message, {
+        icon: "🗑️",
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
     } catch (error) {
       console.log("erroe deletind todo", error);
     }
