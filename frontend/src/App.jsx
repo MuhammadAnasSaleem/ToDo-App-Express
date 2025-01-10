@@ -68,7 +68,37 @@ function App() {
         },
       });
     } catch (error) {
-      console.log("erroe deletind todo", error);
+      console.log("erroe deleting todo", error);
+    }
+  };
+  const editTodo = async (event, id) => {
+    event.preventDefault();
+    const todoValue = event.target.children[0].value;
+    if (todoValue.trim() === "") {
+      toast("Todo Can't be empty", {
+        icon: "❌",
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
+      return;
+    }
+    try {
+      await axios.patch(`${BASE_URL}/api/v1/todo${id}`, {
+        todocontent: todoValue,
+      });
+      setTodos((previoustodos) => {
+        return previoustodos.map((todo) => {
+          if (todo.id == id) {
+            return { ...todo, todocontent: todoValue, isEditing: false };
+          }
+          return todo;
+        });
+      });
+    } catch (error) {
+      console.error("Error editing todo:", error);
     }
   };
 
@@ -91,24 +121,76 @@ function App() {
           </form>
           {/* Add Task button */}
 
+          {!todos?.length && "No TODO Added"}
+
           {/* Task List */}
           <ul className="mt-4 space-y-2">
-            {todos?.map((todo) => (
+            {todos?.map((todo, index) => (
               <li
                 key={todo.id}
                 className="flex justify-between items-center p-2 bg-gray-700 rounded-lg"
               >
-                <span className="text-white">{todo.todocontent}</span>
-                <div className="flex space-x-2">
-                  {/* <button className="text-yellow-400 hover:text-white transition-all">
-                    Edit
-                  </button> */}
-                  <button
-                    className="text-red-500 hover:text-white transition-all"
-                    onClick={() => deleteTodo(todo.id)}
+                {!todo.isEditing ? (
+                  <span className="text-white">{todo.todocontent}</span>
+                ) : (
+                  <form
+                    className="flex gap-6"
+                    onSubmit={(e) => editTodo(e, todo.id)}
                   >
-                    Delete
-                  </button>
+                    <input
+                      type="text"
+                      defaultValue={todo.todocontent}
+                      className="border border-gray-400 text-white bg-slate-900 rounded"
+                    />
+                    <div className="flex gap-3">
+                      {" "}
+                      <button
+                        onClick={() => {
+                          const newTodos = todos.map((todo) => {
+                            todo.isEditing = false;
+                            return todo;
+                          });
+                          setTodos([...newTodos]);
+                        }}
+                        type="button"
+                        className="text-red-500"
+                      >
+                        Cancel
+                      </button>
+                      <button type="submit" className="text-green-500">
+                        Submit
+                      </button>
+                    </div>
+                  </form>
+                )}
+                <div className="flex space-x-2">
+                  {!todo.isEditing ? (
+                    <button
+                      onClick={() => {
+                        const newTodos = todos?.map((todo, i) => {
+                          if (i == index) {
+                            todo.isEditing = true;
+                          } else {
+                            todo.isEditing = false;
+                          }
+                          return todo;
+                        });
+                        setTodos([...newTodos]);
+                      }}
+                      className="text-yellow-400 hover:text-white transition-all"
+                    >
+                      Edit
+                    </button>
+                  ) : null}
+
+                  {!todo?.isEditing ? (
+                    <button
+                      className="text-red-500 hover:text-white transition-all"
+                      onClick={() => deleteTodo(todo.id)}
+                    >
+                      Delete
+                    </button>
+                  ) : null}
                 </div>
               </li>
             ))}
