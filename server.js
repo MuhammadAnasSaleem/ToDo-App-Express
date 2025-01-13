@@ -1,11 +1,13 @@
 import express from "express";
 import cors from "cors";
+import "./database.js";
+import { Todo } from "./models/model.js";
 const app = express();
 const port = process.env.PORT || 3000;
-const todos = [
-  //   { todocontent: "1st todo", id: "1" },
-  //   { todocontent: "2nd todo", id: "2" },
-];
+// const todos = [
+//   //   { todocontent: "1st todo", id: "1" },
+//   //   { todocontent: "2nd todo", id: "2" },
+// ];
 
 app.use(express.json()); // request ko jso kaiformat mai convert karnai kailiye
 app.use(cors());
@@ -14,36 +16,48 @@ app.get("/", (req, res) => {
   res.send("Hello, Welcome to the Todo API!");
 });
 
-app.get("/api/v1/todos", (req, res) => {
-  const message = todos.length ? "Todos received" : "No Todos Available";
-  res.send({ data: todos, message: message });
+app.get("/api/v1/todos", async (req, res) => {
+  try {
+    const todos = await Todo.find({});
+    const message = todos.length
+      ? "Todos received"
+      : "No Todos Available nahi hai";
+
+    // const transformedTodos = todos.map((todo) => ({
+    //   id: todo._id.toString(),
+    //   todocontent: todo.todocontent,
+    //   ip: todo.ip,
+    //   createdAt: todo.createdAt,
+    //   updatedAt: todo.updatedAt,
+    // }));
+    res.send({ data: todos, message: message });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 //This api get all todos
-app.post("/api/v1/todo", (req, res) => {
+app.post("/api/v1/todo", async (req, res) => {
   const obj = {
     todocontent: req.body.todocontent,
+    ip: req.ip,
     id: String(new Date().getTime()),
   };
-  todos.push(obj);
-  res.send({ message: "todo-added", data: obj });
+  const result = await Todo.create(obj);
+  res.send({ message: "todo-added", data: result });
 });
 
 //This api post a todo
 
-app.patch("/api/v1/todo:id", (req, res) => {
+app.patch("/api/v1/todo:id", async (req, res) => {
   const id = req.params.id;
-  let isFound = false;
-  for (let i = 0; i < todos.length; i++) {
-    if (todos[i].id == id) {
-      todos[i].todocontent = req.body.todocontent;
-      isFound = true;
-      break;
-    }
-  }
-  if (isFound) {
+  const result = await Todo.findByIdAndUpdate(id, {
+    todocontent: req.body.todocontent,
+  });
+
+  if (result) {
     res.status(201).send({
-      data: { todocontent: req.body.todocontent, id: id },
+      data: { result },
       message: "todo updated",
     });
   } else {
@@ -52,17 +66,11 @@ app.patch("/api/v1/todo:id", (req, res) => {
 });
 
 //This api edit a todo
-app.delete("/api/v1/todo:id", (req, res) => {
+app.delete("/api/v1/todo:id", async (req, res) => {
   const id = req.params.id;
-  let isFound = false;
-  for (let i = 0; i < todos.length; i++) {
-    if (todos[i].id == id) {
-      todos.splice(i, 1);
-      isFound = true;
-      break;
-    }
-  }
-  if (isFound) {
+  const result = await Todo.findByIdAndDelete(id);
+
+  if (result) {
     res.status(201).send({
       message: "todo deleted",
     });
