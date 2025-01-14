@@ -5,7 +5,14 @@ import toast from "react-hot-toast";
 const maxTodoLength = 30;
 
 function App() {
-  const BASE_URL = "http://localhost:3000"; // or production URL
+  const BASE_URL =
+    "https://to-do-app-express-iela.vercel.app" || "http://localhost:3000"; // or production URL
+  //
+
+  // export const getUri = ()=>{
+  //   if(window.herf)
+  // }
+
   const [todos, setTodos] = useState([]);
 
   // Fetch todos from the server
@@ -45,7 +52,7 @@ function App() {
         e.target.children[0].value = ""; // Clear input
         toast.success("Todo added!");
       } catch (err) {
-        console.log(err);
+        console.log("error hai post main", err);
         toast.error("Error adding todo.");
       }
     }
@@ -53,9 +60,9 @@ function App() {
 
   const deleteTodo = async (id) => {
     try {
-      const res = await axios.delete(`${BASE_URL}/api/v1/todo/${id}`);
+      const res = await axios.delete(`${BASE_URL}/api/v1/todo${id}`);
       if (res?.status === 201) {
-        setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+        setTodos((prevTodos) => prevTodos.filter((todo) => todo._id !== id));
         toast.success(res?.data?.message);
       } else {
         toast.error("Failed to delete todo.");
@@ -76,12 +83,12 @@ function App() {
     }
 
     try {
-      await axios.patch(`${BASE_URL}/api/v1/todo/${id}`, {
+      await axios.patch(`${BASE_URL}/api/v1/todo${id}`, {
         todocontent: todoValue,
       });
       setTodos((prevTodos) =>
         prevTodos.map((todo) =>
-          todo.id === id
+          todo._id === id
             ? { ...todo, todocontent: todoValue, isEditing: false }
             : todo
         )
@@ -115,7 +122,7 @@ function App() {
         <ul className="mt-4 space-y-2">
           {todos?.map((todo, index) => (
             <li
-              key={todo.id}
+              key={todo._id}
               className="flex justify-between items-center p-2 bg-gray-700 rounded-lg"
             >
               {!todo.isEditing ? (
@@ -123,7 +130,7 @@ function App() {
               ) : (
                 <form
                   className="flex gap-6"
-                  onSubmit={(e) => editTodo(e, todo.id)}
+                  onSubmit={(e) => editTodo(e, todo._id)}
                 >
                   <input
                     type="text"
@@ -135,7 +142,7 @@ function App() {
                       onClick={() => {
                         setTodos((prevTodos) =>
                           prevTodos.map((t) =>
-                            t.id === todo.id ? { ...t, isEditing: false } : t
+                            t._id === todo._id ? { ...t, isEditing: false } : t
                           )
                         );
                       }}
@@ -158,7 +165,9 @@ function App() {
                       onClick={() => {
                         setTodos((prevTodos) =>
                           prevTodos.map((t) =>
-                            t.id === todo.id ? { ...t, isEditing: true } : t
+                            t._id === todo._id
+                              ? { ...t, isEditing: true }
+                              : { ...t, isEditing: false }
                           )
                         );
                       }}
@@ -167,7 +176,7 @@ function App() {
                       Edit
                     </button>
                     <button
-                      onClick={() => deleteTodo(todo.id)}
+                      onClick={() => deleteTodo(todo._id)}
                       className="text-red-500 hover:text-white transition-all"
                     >
                       Delete

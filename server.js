@@ -18,18 +18,13 @@ app.get("/", (req, res) => {
 
 app.get("/api/v1/todos", async (req, res) => {
   try {
-    const todos = await Todo.find({});
+    console.log("testing");
+
+    const todos = await Todo.find({}).sort({ createdAt: -1 });
     const message = todos.length
       ? "Todos received"
       : "No Todos Available nahi hai";
 
-    // const transformedTodos = todos.map((todo) => ({
-    //   id: todo._id.toString(),
-    //   todocontent: todo.todocontent,
-    //   ip: todo.ip,
-    //   createdAt: todo.createdAt,
-    //   updatedAt: todo.updatedAt,
-    // }));
     res.send({ data: todos, message: message });
   } catch (error) {
     console.log(error);
@@ -41,7 +36,6 @@ app.post("/api/v1/todo", async (req, res) => {
   const obj = {
     todocontent: req.body.todocontent,
     ip: req.ip,
-    id: String(new Date().getTime()),
   };
   const result = await Todo.create(obj);
   res.send({ message: "todo-added", data: result });
