@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import "dotenv/config";
 import "./database.js";
 import { Todo } from "./models/model.js";
 const app = express();

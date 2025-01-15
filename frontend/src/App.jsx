@@ -5,13 +5,22 @@ import toast from "react-hot-toast";
 const maxTodoLength = 30;
 
 function App() {
-  const BASE_URL =
-    "https://to-do-app-express-iela.vercel.app" || "http://localhost:3000"; // or production URL
+  // const geturl() =
+  //    || ; // or production URL
   //
 
   // export const getUri = ()=>{
   //   if(window.herf)
   // }
+
+  const geturl = () => {
+    const isHosted = window.location.href.includes("https");
+
+    const baseurl = isHosted
+      ? "https://to-do-app-express-iela.vercel.app"
+      : "http://localhost:3000";
+    return baseurl;
+  };
 
   const [todos, setTodos] = useState([]);
 
@@ -19,7 +28,7 @@ function App() {
   const getTodo = async () => {
     //this function get all the todos from server
     try {
-      const res = await axios.get(`${BASE_URL}/api/v1/todos`);
+      const res = await axios.get(`${geturl()}/api/v1/todos`);
       if (res?.data?.data) {
         setTodos(res.data.data); // Set todos from server
       } else {
@@ -45,10 +54,10 @@ function App() {
 
     if (todoValue.trim() !== "") {
       try {
-        const res = await axios.post(`${BASE_URL}/api/v1/todo`, {
+        const res = await axios.post(`${geturl()}/api/v1/todo`, {
           todocontent: todoValue,
         });
-        setTodos((prevTodos) => [...prevTodos, res?.data?.data]);
+        setTodos((prevTodos) => [res?.data?.data, ...prevTodos]);
         e.target.children[0].value = ""; // Clear input
         toast.success("Todo added!");
       } catch (err) {
@@ -60,7 +69,7 @@ function App() {
 
   const deleteTodo = async (id) => {
     try {
-      const res = await axios.delete(`${BASE_URL}/api/v1/todo${id}`);
+      const res = await axios.delete(`${geturl()}/api/v1/todo${id}`);
       if (res?.status === 201) {
         setTodos((prevTodos) => prevTodos.filter((todo) => todo._id !== id));
         toast.success(res?.data?.message);
@@ -83,7 +92,7 @@ function App() {
     }
 
     try {
-      await axios.patch(`${BASE_URL}/api/v1/todo${id}`, {
+      await axios.patch(`${geturl()}/api/v1/todo${id}`, {
         todocontent: todoValue,
       });
       setTodos((prevTodos) =>
@@ -116,7 +125,11 @@ function App() {
         </form>
 
         {/* Display message if no todos */}
-        {todos.length === 0 && <p>No TODO Added</p>}
+        {todos.length === 0 && (
+          <p className=" p-2 bg-gray-700 rounded-lg mt-3 text-center">
+            📝 No Todo
+          </p>
+        )}
 
         {/* Task List */}
         <ul className="mt-4 space-y-2">

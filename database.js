@@ -1,5 +1,4 @@
-const mongodbUri =
-  "mongodb+srv://anas-admin:Dpfiwq8yP1Lj9Fju@cluster0.fsgcr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const mongodbUri = process.env.MONGO_URI;
 
 import mongoose from "mongoose";
 const connectDB = async () => {
