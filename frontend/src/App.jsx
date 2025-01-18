@@ -25,6 +25,7 @@ function App() {
 
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
 
   // Fetch todos from the server
   const getTodo = async () => {
@@ -113,11 +114,28 @@ function App() {
       toast.error("Error updating todo.");
     }
   };
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col justify-center items-center">
-      <h1 className="text-4xl font-bold text-blue-400 mb-6">To-Do App</h1>
-      <div className="w-full sm:w-96 bg-gray-800 p-6 rounded-lg shadow-lg">
+    <div
+      className={`min-h-screen ${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
+      }  flex flex-col justify-center items-center transition-all duration-500 `}
+    >
+      <h1
+        className={`${
+          darkMode ? " text-blue-400 " : "  text-indigo-600"
+        } mb-6 text-4xl font-bold transition-all duration-500`}
+      >
+        To-Do App
+      </h1>
+      <div
+        className={`w-full sm:w-96  p-6 rounded-lg shadow-lg transition-all duration-500 ${
+          darkMode ? "bg-gray-800" : "bg-white"
+        }`}
+      >
         {loading ? (
           //loader
           <div className="flex justify-center items-center ">
@@ -139,10 +157,20 @@ function App() {
             <form onSubmit={addTodo}>
               <input
                 type="text"
-                className="w-full p-3 rounded-lg mb-4 bg-gray-700 text-white outline-none placeholder-gray-400"
+                className={`w-full p-3 rounded-lg placeholder-gray-400  mb-4 transition-all duration-500 border ${
+                  darkMode
+                    ? "   bg-gray-700 text-white outline-none border-gray-700 "
+                    : "   focus:outline-none  focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 "
+                }`}
                 placeholder="Enter task..."
               />
-              <button className="w-full py-3 bg-blue-500 text-black font-bold rounded-lg hover:bg-blue-600 transition-all">
+              <button
+                className={`w-full rounded-lg py-3 transition-all font-bold duration-500 ${
+                  darkMode
+                    ? "  bg-blue-500 text-black   hover:bg-blue-600 "
+                    : " bg-indigo-600 text-white   hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                }`}
+              >
                 Add Task
               </button>
             </form>
@@ -157,10 +185,18 @@ function App() {
               {todos?.map((todo, index) => (
                 <li
                   key={todo._id}
-                  className="flex justify-between items-center p-2 bg-gray-700 rounded-lg"
+                  className={` transition-all duration-500 flex justify-between items-center p-2 rounded-lg${
+                    darkMode
+                      ? "  bg-gray-700 "
+                      : "  bg-gray-50  shadow-sm hover:bg-gray-100 "
+                  }`}
                 >
                   {!todo.isEditing ? (
-                    <span className="text-white">{todo.todocontent}</span>
+                    <span
+                      className={`${darkMode ? "text-white" : "text-black "}`}
+                    >
+                      {todo.todocontent}
+                    </span>
                   ) : (
                     <form
                       className="flex gap-6"
@@ -226,6 +262,14 @@ function App() {
           </>
         )}
       </div>
+      <button
+        onClick={toggleDarkMode}
+        className={`px-4 py-2   rounded-full shadow-sm focus:outline-none focus:ring-2   absolute top-4 right-2 transition-all duration-500 ${
+          darkMode ? " bg-white  text-black" : "bg-gray-700 text-white"
+        }`}
+      >
+        {darkMode ? "Lightmode" : "Darkmode"}
+      </button>
     </div>
   );
 }
